@@ -89,6 +89,7 @@ textarea:focus {
   color: var(--muted);
 }
 
+/* --- required counter states --- */
 #char-count.warning {
   color: orange;
 }
