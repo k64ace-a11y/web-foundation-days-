@@ -1,45 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QuickNotes</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <header>
-      <h1>QuickNotes</h1>
-      <p>Capture ideas before they disappear.</p>
-      <nav>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about.html">About</a></li>
-        </ul>
-      </nav>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Day 4 — Note Pad</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="card">
+    <header class="card__header">
+      <h1>Quick note</h1>
+      <button id="theme-toggle" class="btn btn--ghost" type="button">Dark mode</button>
     </header>
 
-    <main>
-      <section>
-        <h2>Add a note</h2>
-        <form id="note-form">
-          <label for="note-input">New note</label>
-          <input type="text" id="note-input" placeholder="Type a note..." />
-          <button type="submit">Add Note</button>
-        </form>
-      </section>
+    <label for="note-text">Your note</label>
+    <textarea
+      id="note-text"
+      name="note-text"
+      rows="8"
+      placeholder="Start typing… (max 200 characters)"
+    ></textarea>
 
-      <section>
-        <h2>Your notes</h2>
-        <p id="note-count">You have 2 notes.</p>
-        <ul id="notes-list">
-          <li>Revise HTML forms</li>
-          <li>Push my code to GitHub</li>
-        </ul>
-      </section>
-    </main>
+    <div class="counters">
+      <p id="char-count" aria-live="polite">0 / 200 characters</p>
+      <p id="word-count" aria-live="polite">0 words</p>
+    </div>
 
-    <footer>
-      <p>&copy; 2026 QuickNotes. Built during Web Foundations.</p>
-    </footer>
-  </body>
+    <button id="clear-btn" class="btn" type="button">Clear</button>
+  </main>
+</body>
 </html>
