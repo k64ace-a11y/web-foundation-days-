@@ -1,78 +1,98 @@
-// ---------- 1. Elements and settings ----------
-const textArea = document.querySelector("#note-text");
-const charCount = document.querySelector("#char-count");
-const wordCount = document.querySelector("#word-count");
-const clearBtn = document.querySelector("#clear-btn");
-const themeBtn = document.querySelector("#theme-toggle");
- 
-const MAX = 200;
-const WARN_AT = 180;
-const DRAFT_KEY = "note-draft";
-const THEME_KEY = "theme";
- 
-// ---------- 2. Counting ----------
-function countWords(text) {
-  const trimmed = text.trim();
-  if (trimmed === "") return 0;
-  return trimmed.split(/\s+/).length; // split on any run of spaces
-}
- 
+// DOM Element Selection
+const noteText = document.getElementById("note-text");
+const charCount = document.getElementById("char-count");
+const wordCount = document.getElementById("word-count");
+const clearBtn = document.getElementById("clear-btn");
+const themeToggle = document.getElementById("theme-toggle");
+
+/**
+ * Updates character and word counters and applies appropriate state classes.
+ */
 function updateCounts() {
-  const text = textArea.value;
-  const chars = text.length;
-  const words = countWords(text);
- 
-  charCount.textContent = `${chars} / ${MAX} characters`;
-  wordCount.textContent = words === 1 ? "1 word" : `${words} words`;
- 
-  // remove both classes, then add the one that applies (if any)
+  const val = noteText.value;
+  const len = val.length;
+
+  // Update Character Count
+  charCount.textContent = `${len} / 200 characters`;
+
+  // Update Word Count
+  const trimmed = val.trim();
+  const words = trimmed === "" ? 0 : trimmed.split(/\s+/).length;
+  wordCount.textContent = `${words} ${words === 1 ? "word" : "words"}`;
+
+  // Reset state classes
   charCount.classList.remove("warning", "over");
-  if (chars > MAX) {
+
+  // Apply warning (>180 and <=200) or over (>200) class
+  if (len > 200) {
     charCount.classList.add("over");
-  } else if (chars > WARN_AT) {
+  } else if (len > 180) {
     charCount.classList.add("warning");
   }
 }
- 
-// ---------- 3. Draft saving ----------
-function saveDraft() {
-  localStorage.setItem(DRAFT_KEY, textArea.value);
-}
- 
-function clearAll() {
-  textArea.value = "";
-  localStorage.removeItem(DRAFT_KEY);
+
+/**
+ * Clears the textarea, removes draft from localStorage, and updates counters.
+ */
+function clearNote() {
+  noteText.value = "";
+  localStorage.removeItem("noteDraft");
   updateCounts();
-  textArea.focus();
 }
- 
-// ---------- 4. Theme ----------
-function applyTheme(theme) {
-  const isDark = theme === "dark";
-  document.body.classList.toggle("dark", isDark); // add if true, remove if false
-  themeBtn.textContent = isDark ? "Light mode" : "Dark mode";
-}
- 
-function toggleTheme() {
-  const newTheme = document.body.classList.contains("dark") ? "light" : "dark";
-  applyTheme(newTheme);
-  localStorage.setItem(THEME_KEY, newTheme);
-}
- 
-// ---------- 5. Events ----------
-textArea.addEventListener("input", () => {
+
+// Event Listeners
+
+// Save draft and update counts on input
+noteText.addEventListener("input", () => {
   updateCounts();
-  saveDraft();
+  localStorage.setItem("noteDraft", noteText.value);
 });
- 
-textArea.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") clearAll();
+
+// Clear note on Clear button click
+clearBtn.addEventListener("click", clearNote);
+
+// Clear note on Escape key press inside textarea
+noteText.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    clearNote();
+  }
 });
- 
-clearBtn.addEventListener("click", clearAll);
-themeBtn.addEventListener("click", toggleTheme);
- 
-// ---------- 6. Restore saved state on page load ----------
-textArea.value = localStorage.getItem(DRAFT_KEY) || "";
-applyTheme(localStorage.getItem(THEME_KEY) || "light");
-updateCounts();
+
+// Toggle dark mode theme and save preference
+themeToggle.addEventListener("click", () => {
+  const isDark = document.body.classList.toggle("dark");
+  if (isDark) {
+    themeToggle.textContent = "Light mode";
+    localStorage.setItem("theme", "dark");
+  } else {
+    themeToggle.textContent = "Dark mode";
+    localStorage.setItem("theme", "light");
+  }
+});
+
+/**
+ * Restores theme preference and note draft from localStorage on app initialization.
+ */
+function init() {
+  // Restore saved theme preference
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark");
+    themeToggle.textContent = "Light mode";
+  } else {
+    document.body.classList.remove("dark");
+    themeToggle.textContent = "Dark mode";
+  }
+
+  // Restore saved note draft
+  const savedDraft = localStorage.getItem("noteDraft");
+  if (savedDraft !== null) {
+    noteText.value = savedDraft;
+  }
+
+  // Calculate initial character and word counts
+  updateCounts();
+}
+
+// Initialize application state (script is deferred in HTML head)
+init();
