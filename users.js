@@ -12,22 +12,19 @@ const usersListEl = document.getElementById('users-list');
 let allUsers = [];
 
 /**
- * Render a list of users into #users-list.
- * If the list is empty, show a message in #status.
+ * Set the status line and toggle the error style.
+ */
+function setStatus(text, isError = false) {
+  statusEl.textContent = text;
+  statusEl.classList.toggle('error', isError);
+}
+
+/**
+ * Draw an array of users into #users-list.
+ * This function only renders — it does not touch #status.
  */
 function renderUsers(list) {
-  // Clear previous list
   usersListEl.innerHTML = '';
-
-  if (list.length === 0) {
-    statusEl.textContent = 'No users match your filter.';
-    statusEl.classList.remove('error');
-    return;
-  }
-
-  // Clear status when we have results (loading/success handled elsewhere)
-  statusEl.textContent = '';
-  statusEl.classList.remove('error');
 
   list.forEach(user => {
     const li = document.createElement('li');
@@ -58,12 +55,11 @@ function renderUsers(list) {
  */
 async function loadUsers() {
   loadButton.disabled = true;
-  statusEl.textContent = 'Loading...';
-  statusEl.classList.remove('error');
+  setStatus('Loading...');
 
   try {
-    // --- To test the error path, temporarily change the URL below ---
-    // e.g. const response = await fetch('https://jsonplaceholder.typicode.com/invalid-users');
+    // --- To test the error path, temporarily break the URL below ---
+    // e.g. fetch('https://jsonplaceholder.typicode.com/invalid-users')
     const response = await fetch(API_URL);
 
     if (!response.ok) {
@@ -73,31 +69,30 @@ async function loadUsers() {
     const data = await response.json();
     allUsers = data;
 
-    // Render all users
     renderUsers(allUsers);
+    setStatus(`Loaded ${data.length} users.`);
 
-    // Success message (overrides the empty status from renderUsers)
-    statusEl.textContent = `Loaded ${data.length} users.`;
-    statusEl.classList.remove('error');
+    // Re-apply any filter that is already typed in the box
+    applyFilter();
   } catch (error) {
-    statusEl.textContent = `Failed to load users: ${error.message}`;
-    statusEl.classList.add('error');
-    usersListEl.innerHTML = ''; // clear list on error
+    allUsers = [];
+    usersListEl.innerHTML = '';
+    setStatus(`Failed to load users: ${error.message}`, true);
   } finally {
     loadButton.disabled = false;
   }
 }
 
-// --- Event listeners ---
-
-loadButton.addEventListener('click', loadUsers);
-
-filterInput.addEventListener('input', () => {
+/**
+ * Filter the stored users by the current input value and re-render.
+ * Never triggers a network request.
+ */
+function applyFilter() {
   const filterText = filterInput.value.trim().toLowerCase();
 
   if (allUsers.length === 0) {
-    // No users loaded yet; show message
     renderUsers([]);
+    setStatus('No users loaded yet — click "Load users".');
     return;
   }
 
@@ -106,4 +101,15 @@ filterInput.addEventListener('input', () => {
   );
 
   renderUsers(filtered);
-});
+
+  if (filtered.length === 0) {
+    setStatus('No users match your filter.');
+  } else {
+    setStatus(`Showing ${filtered.length} of ${allUsers.length} users.`);
+  }
+}
+
+// --- Event listeners ---
+
+loadButton.addEventListener('click', loadUsers);
+filterInput.addEventListener('input', applyFilter);
