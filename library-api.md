@@ -6,7 +6,7 @@ REST API design for managing books in a library.
 
 - Base URL: `/api`
 - All request and response bodies are `application/json`.
-- `{id}` is the book's unique identifier (integer).
+- `{id}` is the book's unique integer identifier.
 
 ---
 
@@ -103,8 +103,8 @@ REST API design for managing books in a library.
 
 - **Method:** `GET`
 - **Path:** `/books?author={authorName}`
-- **Description:** Retrieve every book written by a specific author. The author name
-  is passed as a query parameter and matched case-insensitively.
+- **Description:** Retrieve every book by a specific author. The name is passed
+  as a query parameter and matched case-insensitively.
 - **Request body:** None.
 - **Example request:** `GET /api/books?author=F.%20Scott%20Fitzgerald`
 - **Success status:** `200 OK`
@@ -115,15 +115,15 @@ REST API design for managing books in a library.
 
 ### 400 Bad Request
 
-Returned when the request itself is malformed or the payload fails validation.
+Returned when the request is malformed or the payload fails validation.
 
-- **Example:** `POST /api/books` with a body that omits the required `title` field,
-  or sends `publishedYear` as a string instead of a number. The server rejects it
-  rather than storing incomplete data.
+- **Example:** `POST /api/books` with a body that omits the required `title`
+  field, or sends `publishedYear` as a string instead of a number. The server
+  rejects it rather than storing incomplete data.
 
 ### 404 Not Found
 
 Returned when the requested resource does not exist.
 
-- **Example:** `GET /api/books/9999` when no book with ID `9999` has ever been
-  created. The same code applies to `PUT`, `PATCH`, and `DELETE` on a missing ID.
+- **Example:** `GET /api/books/9999` when no book with ID `9999` exists. The same
+  code applies to `PUT`, `PATCH`, and `DELETE` on a missing ID.

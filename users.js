@@ -2,17 +2,18 @@
 
 const API_URL = 'https://jsonplaceholder.typicode.com/users';
 
-// DOM elements
-const loadButton = document.getElementById('load-users');
+// --- DOM elements ---
+const loadButton  = document.getElementById('load-users');
 const filterInput = document.getElementById('filter-input');
-const statusEl = document.getElementById('status');
+const statusEl    = document.getElementById('status');
 const usersListEl = document.getElementById('users-list');
 
-// Store loaded users
+// --- State ---
+// Holds the users returned by the API so the filter can work offline.
 let allUsers = [];
 
 /**
- * Set the status line and toggle the error style.
+ * Update the status line and toggle the error style.
  */
 function setStatus(text, isError = false) {
   statusEl.textContent = text;
@@ -21,7 +22,7 @@ function setStatus(text, isError = false) {
 
 /**
  * Draw an array of users into #users-list.
- * This function only renders — it does not touch #status.
+ * Only renders — the caller is responsible for the status line.
  */
 function renderUsers(list) {
   usersListEl.innerHTML = '';
@@ -51,7 +52,7 @@ function renderUsers(list) {
 
 /**
  * Load users from the API.
- * Uses async/await with try/catch/finally.
+ * Uses async / await with try / catch / finally.
  */
 async function loadUsers() {
   loadButton.disabled = true;
@@ -72,7 +73,7 @@ async function loadUsers() {
     renderUsers(allUsers);
     setStatus(`Loaded ${data.length} users.`);
 
-    // Re-apply any filter that is already typed in the box
+    // Re-apply whatever is already typed in the filter box.
     applyFilter();
   } catch (error) {
     allUsers = [];
@@ -85,7 +86,7 @@ async function loadUsers() {
 
 /**
  * Filter the stored users by the current input value and re-render.
- * Never triggers a network request.
+ * Never issues a network request.
  */
 function applyFilter() {
   const filterText = filterInput.value.trim().toLowerCase();
@@ -110,6 +111,5 @@ function applyFilter() {
 }
 
 // --- Event listeners ---
-
 loadButton.addEventListener('click', loadUsers);
 filterInput.addEventListener('input', applyFilter);
