@@ -1,4 +1,18 @@
-Day 8 Reflection
-Throughout the Web Foundations course, the most challenging concept for me was asynchronous JavaScript, especially Promises, async/await, and using fetch to connect frontend components to external REST APIs. At first, understanding execution order and handling data that arrives later felt confusing. I overcame this by practising DOM updates step by step and using the browser developer tools to inspect request payloads, headers, and status codes. Seeing network responses change the interface helped me understand how asynchronous data flows work.
-Based on the feedback I received on my capstone, I would mainly improve user-facing error handling and loading states. Although the core functionality worked, network requests could sometimes make the interface feel unresponsive when the connection was slow. In a future version, I would add loading spinners, disable buttons while requests are pending, and display clear, friendly error messages when a request takes too long or fails. These changes would help users understand what the application is doing instead of leaving them wondering whether it is working.
-Next, I plan to strengthen my backend development skills by learning a framework such as Node.js with Express or Python with FastAPI or Flask. This will help me understand how REST APIs are built, not just how to use them from the frontend. I also want to improve my knowledge of relational databases, including SQL schemas, indexing, and query optimization, so I can build more complete and reliable web applications from frontend to backend.
+# Course Reflection
+
+The most difficult concept for me was asynchronous JavaScript. At
+first I did not understand why my code printed "Promise {<pending>}"
+instead of data. What helped was the idea that fetch returns a
+promise of a future value, and that await pauses only my function
+while the rest of the page keeps running. Rebuilding the user
+directory assignment twice, and watching the requests in the Network
+tab, made it click.
+
+In my capstone, the feedback said my architecture diagram had good
+components but I did not explain the cache invalidation clearly. I
+would improve this by showing the POST /notes flow step by step on
+the diagram, including exactly when the cached notes are deleted.
+
+Next, I want to build a real backend for QuickNotes with Node.js,
+Express and PostgreSQL, so that my API design and data model become
+working code. After that I plan to learn React.
